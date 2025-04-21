@@ -3,7 +3,7 @@
     Version: 1.3.0
     Last Change: 11/23/2024
     Author: Prachi Singh
-    Repo: (Add your GitHub repo link here)
+    Repo:   (Add your GitHub repo link here)
     Issues: (Add your GitHub issues link here)
 
     Description: This file contains scripts associated with the portfolio website.
@@ -98,12 +98,86 @@
     $(window).on('scroll', function() {
         var scrollPos = $(window).scrollTop();
         $('header a').each(function() {
-            var section = $($(this).attr('href'));
+            var section = $('#' + $(this).attr('href').split('#')[1]);
             if (section.position().top <= scrollPos && section.position().top + section.height() > scrollPos) {
                 $('header a').removeClass('active');
                 $(this).addClass('active');
             }
         });
     });
+
+    //  About Section Fade-in (Intersection Observer)
+const aboutSection = document.querySelector('#about');
+const aboutText = document.querySelector('#about .col-md-8');
+
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            aboutSection.classList.add('visible');
+            observer.unobserve(aboutSection); //  Optimize: Only observe once
+        }
+    });
+}, {
+    threshold: 0.2 //  When 20% of the section is visible
+});
+
+observer.observe(aboutSection);
+
+    //  Set --item-index variable for staggered animation
+    const experienceItems = document.querySelectorAll('.experience-item');
+    experienceItems.forEach((item, index) => {
+        item.style.setProperty('--item-index', index + 1);
+    });
+
+    //  Contact Form Validation
+    $('#contact-form').submit(function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        const email = $('#email').val();
+        const message = $('#message').val();
+        const statusDiv = $('#form-status');
+
+        statusDiv.text(''); // Clear previous status
+
+        if (!email || !message) {
+            statusDiv.text('Please fill in all fields.');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            statusDiv.text('Invalid email format.');
+            return;
+        }
+
+        // If validation passes, you would typically submit the form
+        // using AJAX or allow the default form submission
+        // For this example, we'll just show a success message:
+        statusDiv.text('Form submitted successfully!');
+        //  You can replace the above line with your actual submission logic
+        //  (e.g., AJAX call to a server-side script)
+
+        //  Example using AJAX (replace with your actual server-side endpoint)
+        /*
+        $.ajax({
+            url: 'your-server-side-endpoint.php',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                statusDiv.text('Form submitted successfully!');
+                $('#contact-form')[0].reset(); // Clear form
+            },
+            error: function() {
+                statusDiv.text('An error occurred. Please try again.');
+            }
+        });
+        */
+    });
+
+    //  Simple Email Validation Function
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
 
 })(jQuery);
